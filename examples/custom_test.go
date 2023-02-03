@@ -11,6 +11,8 @@ package main
 import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
+	"cuelang.org/go/cue/format"
+	"cuelang.org/go/encoding/protobuf"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -20,13 +22,26 @@ import (
 var(
     CTX = cuecontext.New()
 
-	filename = "api_proxy.cue"
+	cueFile = "api_proxy.cue"
+	protoFile = "protobuf/item.proto"
 )
 
 func TestValue(t *testing.T) {
-	fmt.Println("unique list by val")
+	pp, err := protobuf.Extract(protoFile,nil, &protobuf.Config{
+		Paths: []string{},
+	})
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
-	fp := filepath.Join("cue_script", filename)
+	schema, _ :=format.Node(pp, format.Simplify())
+
+	fmt.Println(string(schema))
+
+
+
+	fp := filepath.Join("cue_script", cueFile)
 	input, err := ioutil.ReadFile(fp)
 	if err != nil {
 		fmt.Println("Error:", err)

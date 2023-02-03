@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+message Item {
+  optional uint64 id=1;
+  optional string name=2;
+  optional Price price=3;
+}
+
+message Price {
+  optional float val=1;
+}

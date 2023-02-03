@@ -1,12 +1,11 @@
 #Item: {
-    id:int
-    name:string
-    abc?:string
-    price:{...}
+	id?:    uint64 @protobuf(1,uint64)
+	name?:  string @protobuf(2,string)
+	price?: #Price @protobuf(3,Price)
 }
 
-#Price:{
-    val:number
+#Price: {
+	val?: float32 @protobuf(1,float)
 }
 
 // test data, origin response
