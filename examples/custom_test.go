@@ -55,6 +55,9 @@ func TestValue(t *testing.T) {
 		return
 	}
 
+	cp := cue.ParsePath("flat_response")
+	data = data.LookupPath(cp)
+
 	b, e := data.MarshalJSON()
 	if e != nil {
 		fmt.Println("Error:", e)
