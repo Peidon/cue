@@ -17,8 +17,6 @@ import (
 	"cuelang.org/go/tools/flow"
 )
 
-var CTX cue.Context
-
 // Our tasks specified as Cue
 var input = `
 tasks: {
