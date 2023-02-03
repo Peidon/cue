@@ -12,44 +12,35 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	"fmt"
+	"io/ioutil"
+	"path/filepath"
 	"testing"
 )
 
 var(
     CTX = cuecontext.New()
 
-	uniqueList = `
- 
-import "list"
-
-#elem: {
-	key: string
-	val: _
-}
-
-elems: [...#elem] & [
-	{key: "a", val: 1},
-	{key: "b", val: 1},
-	{key: "a", val: 2},
-	{key: "b", val: 1},
-]
-
-// we compare the current element and add it if it does not appear in the remainder of the list
-// in doing so, we add the last unique occurance to the result
-uniq: [ for i, x in elems if !list.Contains(list.Drop(elems, i+1), x) {x}]`
+	filename = "api_proxy.cue"
 )
 
 func TestValue(t *testing.T) {
 	fmt.Println("unique list by val")
 
-	// compile our input
-	value := CTX.CompileString(uniqueList, cue.Filename("input.cue"))
-	if value.Err() != nil {
-		fmt.Println("Error:", value.Err())
+	fp := filepath.Join("cue_script", filename)
+	input, err := ioutil.ReadFile(fp)
+	if err != nil {
+		fmt.Println("Error:", err)
 		return
 	}
 
-	b, e := value.MarshalJSON()
+	// compile our input
+	data := CTX.CompileBytes(input, cue.Filename("input.cue"))
+	if data.Err() != nil {
+		fmt.Println("Error:", data.Err())
+		return
+	}
+
+	b, e := data.MarshalJSON()
 	if e != nil {
 		fmt.Println("Error:", e)
 		return
