@@ -19,15 +19,15 @@ import (
 	"testing"
 )
 
-var(
-    CTX = cuecontext.New()
+var (
+	CTX = cuecontext.New()
 
-	cueFile = "api_proxy.cue"
+	cueFile   = "api_proxy.cue"
 	protoFile = "protobuf/item.proto"
 )
 
 func TestValue(t *testing.T) {
-	pp, err := protobuf.Extract(protoFile,nil, &protobuf.Config{
+	pp, err := protobuf.Extract(protoFile, nil, &protobuf.Config{
 		Paths: []string{},
 	})
 	if err != nil {
@@ -35,11 +35,9 @@ func TestValue(t *testing.T) {
 		return
 	}
 
-	schema, _ :=format.Node(pp, format.Simplify())
+	schema, _ := format.Node(pp, format.Simplify())
 
 	fmt.Println(string(schema))
-
-
 
 	fp := filepath.Join("cue_script", cueFile)
 	input, err := ioutil.ReadFile(fp)
@@ -55,8 +53,20 @@ func TestValue(t *testing.T) {
 		return
 	}
 
+	// mock api return
+	dataPath := cue.ParsePath("data")
+	filledData := data.FillPath(dataPath, []Item{
+		{
+			ID:   1,
+			Name: "item",
+			ItemPrice: Price{
+				Value: 100.0,
+			},
+		},
+	})
+
 	cp := cue.ParsePath("flat_response")
-	data = data.LookupPath(cp)
+	data = filledData.LookupPath(cp)
 
 	b, e := data.MarshalJSON()
 	if e != nil {
@@ -66,4 +76,14 @@ func TestValue(t *testing.T) {
 
 	fmt.Println(string(b))
 
+}
+
+type Item struct {
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	ItemPrice Price  `json:"price"`
+}
+
+type Price struct {
+	Value float64 `json:"val"`
 }

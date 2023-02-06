@@ -9,24 +9,16 @@
 }
 
 // test data, origin response
-elems : [...#Item] & [
-    {
-        id:1
-        name:"shop ee"
-        price: #Price & {
-            val: 100.00
-        }
-    }
-]
+data : [...#Item]
 
 // 取列表第一个作为返回
 // 列表为空时, 会返回null
-response : #Item & elems[0]
+response : #Item & data[0]
 
 
 // 结构扁平化
 flat_response : {
-    id : elems[0].id
-    price_val: elems[0].price.val
-    name : *elems[0].name | "defalt" // 可以加默认值
+    id : data[0].id
+    price_val: data[0].price.val
+    name : *data[0].name | "defalt" // 可以加默认值
 }
